@@ -41,7 +41,7 @@ func atoi(_ string: String) -> Int32 {
     if (i >= n) {
         return 0
     }
-    // sign
+    // capture sign
     var sign:Int32 = 1
     if chars[i] == "+" || chars[i] == "-" {
         sign = (chars[i] == "+") ? +1 : -1
@@ -49,7 +49,7 @@ func atoi(_ string: String) -> Int32 {
     }
 
 
-    // allow only valid chars
+    // allow only valid char numbers
     let isValidCharNumber = { (_ char: Character) -> Bool in
         return chars[i] > "0" && chars[i] < "9"
     }
