@@ -1,10 +1,10 @@
 
 
-/*
+/**
 
     ref: https://youtu.be/3ZDZ-N0EPV0
 
-    * -> zero more chars
+    * -> zero more chars (in regex: * means zero or more * before char ie.. in a*b, a is before char)
     ? -> one char
 
 */
