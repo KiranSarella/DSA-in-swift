@@ -9,7 +9,7 @@
 */
 
 
-
+/*
 func differentWays(_ n: Int) -> Int64 {
     
     // base case
@@ -37,6 +37,38 @@ func differentWays(_ n: Int) -> Int64 {
 
     print(d)
     return d[n]
+}
+*/
+
+// optimized mem
+func differentWays(_ n: Int) -> Int64 {
+    
+    // base case
+    if n <= 0 {
+        return 0
+    }
+
+    if n == 1 || n == 2 {
+        return 1
+    }
+    if n == 3 {
+        return 2
+    }
+
+    // initial values
+    var d = [Int64](repeating: 0, count: 4)
+    d[0] = 1
+    d[1] = 1
+    d[2] = 1
+    d[3] = 2
+
+    for _ in 4...n {
+        d.append(d[3] + d[1] + d[0])
+        d.removeFirst()
+    }
+
+    print(d)
+    return d[3]
 }
 
 print(differentWays(5))
