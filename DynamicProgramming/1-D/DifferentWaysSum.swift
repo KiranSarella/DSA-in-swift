@@ -41,7 +41,7 @@ func differentWays(_ n: Int) -> Int64 {
 */
 
 // optimized mem
-func differentWays(_ n: Int) -> Int64 {
+func differentWays(_ n: Int) -> UInt64 {
     
     // base case
     if n <= 0 {
@@ -56,7 +56,7 @@ func differentWays(_ n: Int) -> Int64 {
     }
 
     // initial values
-    var d = [Int64](repeating: 0, count: 4)
+    var d = [UInt64](repeating: 0, count: 4)
     d[0] = 1
     d[1] = 1
     d[2] = 1
@@ -74,6 +74,7 @@ func differentWays(_ n: Int) -> Int64 {
 print(differentWays(5))
 print(differentWays(6))
 print(differentWays(50))
+// print(differentWays(100))
 
 
 
