@@ -1,52 +1,8 @@
-/*
+/**
 
-    https://www.programiz.com/dsa/heap-data-structure
-    https://github.com/apple/swift-nio/blob/main/Sources/NIO/Heap.swift
-    https://github.com/raywenderlich/swift-algorithm-club/blob/master/Heap/Heap.swift
-
-
-    Binary Heap Data Structure
-
-    - Eighter must be min or max head
-    - Complete Binary Tree
-
-    add: append new element to existing tree in level wise
-            & do heapify
-    remove: remove node and fill with last level last node 
-            & d heapify
-
-    Heap Properties: (heap structure)
-    (complete binary tree properties)
-    - all levels of the heap should be full, except the last one
-    - nodes must be filled from leftIndex to right strictly
-    (heap property)
-    -   max heap: key of each node must be greater then its child nodes
-                & the key of the root node is the largest among all other nodes.
-        min heap: key of each node is always smaller than the child nodes 
-                & the key of the root node is the smallest among all other nodes.
-
-
-    Heapify: is a process of creating heap (max/min) from a complete binary tree
-
-
-    1. convert given array to complete binary tree 
-        (virtually, swapping elements in the array itself, not creating new tree with Nodes)
-    2. convert complete binary tree to heap data structure (heapify)
-    3. insert new element at the last
-        - do heapify up
-    4. remove element (swap element with last element, and remove last)
-        - do heapify down
-    5. 
-
-
-    Difference between shift up and shift down?
-        - shift up -> one comparision (with parent)
-        - shift down -> two comparision (with both child nodes)
-
-    https://discuss.codecademy.com/t/what-are-some-differences-between-heapify-up-and-heapify-down/375384
+    Heap Sort
 
 */
-
 
 
 
@@ -173,6 +129,23 @@ struct Heap<Element: Comparable> {
 
 }
 
+extension  Heap {
+
+    public mutating func sort() -> [Element] {
+
+        // remove root every time and replace at the end (ie.. swap root and last element)
+        var currentLastIndex = self.lastIndex
+        while currentLastIndex >= 0 {
+            self.storage.swapAt(0, currentLastIndex)
+            heapifyDown(0, until: currentLastIndex)
+            currentLastIndex -= 1
+        }
+
+        return Array(self.storage)
+    }
+}
+
+
 var myHeap = Heap<Int>()
 myHeap.insert(10)
 myHeap.insert(15)
@@ -181,10 +154,7 @@ myHeap.insert(17)
 myHeap.insert(8)
 
 print(myHeap.storage)
-
-_ = myHeap.remove(20)
-print(myHeap.storage)
-_ = myHeap.remove()
-
-
-
+print(myHeap.sort())
+// _ = myHeap.remove(20)
+// print(myHeap.storage)
+// _ = myHeap.remove()
