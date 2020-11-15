@@ -131,6 +131,12 @@ struct Heap<Element: Comparable> {
 
 extension  Heap {
 
+    public mutating func insert<S: Sequence>(_ sequence: S) where S.Iterator.Element == Element {
+        for value in sequence {
+            insert(value)
+        }
+    }
+
     public mutating func sort() -> [Element] {
 
         // remove root every time and replace at the end (ie.. swap root and last element)
@@ -143,18 +149,12 @@ extension  Heap {
 
         return Array(self.storage)
     }
+
 }
 
 
 var myHeap = Heap<Int>()
-myHeap.insert(10)
-myHeap.insert(15)
-myHeap.insert(20)
-myHeap.insert(17)
-myHeap.insert(8)
 
+myHeap.insert([10, 15, 20, 17, 8])
 print(myHeap.storage)
 print(myHeap.sort())
-// _ = myHeap.remove(20)
-// print(myHeap.storage)
-// _ = myHeap.remove()
