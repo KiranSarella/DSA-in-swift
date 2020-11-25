@@ -74,81 +74,90 @@ func checkPrime(_ n: Int) -> Bool {
     return true
 }
 
-/// Separate chaining with list head cells
-struct HashTable<Key:Hashable, Value> {
+/// Basic - will cause collision
+struct HashTable<Value> {
 
-    private typealias Element = (key: Key, value: Value)    // named tuple
-    private typealias Bucket = [Element]
-    private var table: [Bucket] 
+    private typealias Element = (key: String, value: Value)
+    
+    private var table: [Element?] 
     private var primeCapacity: Int
 
     private (set) var count = 0
 
     var isEmpty: Bool { return count == 0 }
 
-
     init(capacity: Int) {
         assert(capacity > 0)
         // get prime capacity
         let primeCapacity = getPrime(capacity)
         print(primeCapacity)
-        self.table = [Bucket](repeating: [], count: primeCapacity)
+        self.table = [Element?](repeating: nil, count: primeCapacity)
         self.primeCapacity = primeCapacity
     }
 
     // get value
-    func getValue(forKey key: Key) -> Value? {
+    func getValue(forKey key: String) -> Value? {
+
+        let head = getHash(forKey: key)
+
+        if let (_key, value) = self.table[head], _key == key {
+            return value
+        }
 
         return nil
     }
 
     // set value
-    mutating func setValue(_ value: Value, forKey key: Key) {
+    mutating func setValue(_ value: Value, forKey key: String) {
         let head = getHash(forKey: key)
 
-        // check if key exists in the chain
-        // loop buckets in the chain
-        for (i, bucket) in self.table[head].enumerated() {
-            if bucket.key == key {
-                // update value
-                self.table[head][i].value = value 
-                return
+        if let (_key, value) = self.table[head] {
+
+            if _key == key {
+                self.table[head] = (key: key, value: value)
+                // self.table[head].value = value
+                print("inserted - \(key)")
+            } else {
+                print("COLLISION OCCURRED - \(key)")
             }
+
+            return
         }
 
         // create new bucket in the chain
-        table[head].append((key: key, value: value))
+        table[head] = (key: key, value: value)
         count += 1
         return
     }
 
     // remove value
-    mutating func removeValue(forKey key: Key) {
+    mutating func removeValue(forKey key: String) {
         let head = getHash(forKey: key)
 
         // loop buckets in the chain
-        for (i, bucket) in self.table[head].enumerated() {
-            if bucket.key == key {
-                // remove bucket
-                self.table[head].remove(at: i)
-                count -= 1
-                return
-            }
+        if self.table[head] != nil {
+            self.table[head] = nil
+            count -= 1
         }
-
     }
 
 
     // get hash for key
-    func getHash(forKey key: Key) -> Int {
-        return abs(key.hashValue % primeCapacity)
+    func getHash(forKey key: String) -> Int {
+
+        var charSum = 0
+        for ascii in key.utf8 {
+            charSum += Int(ascii)
+        }
+
+        return abs(charSum % primeCapacity)
     }
 
 }
 
 extension HashTable {
     
-    subscript(key: Key) -> Value? {
+    subscript(key: String) -> Value? {
         get {
             return getValue(forKey: key)
         }
@@ -166,7 +175,9 @@ extension HashTable {
 extension HashTable: CustomStringConvertible {
     /// A string that represents the contents of the hash table.
     public var description: String {
-        let pairs = self.table.flatMap { b in b.map { e in "\(e.key) = \(e.value)" } }
+
+        let items = self.table.compactMap {$0}  
+        let pairs = items.map { e in "\(e.key) = \(e.value)" }
         return pairs.joined(separator: ", ")
     }
     
@@ -174,20 +185,25 @@ extension HashTable: CustomStringConvertible {
     /// the hash table, suitable for debugging.
     public var debugDescription: String {
         var str = ""
-        for (i, bucket) in self.table.enumerated() {
-            let pairs = bucket.map { e in "\(e.key) = \(e.value)" }
-            str += "bucket \(i): " + pairs.joined(separator: ", ") + "\n"
+        for (i, pair) in self.table.enumerated() {
+            if let pair = pair {
+                let pairStr = "\(pair.key) = \(pair.value)"
+                str += "bucket \(i): " + pairStr + "\n"
+            } else {
+                str += "bucket \(i): " + "" + "\n"
+            }
         }
         return str
     }
 }
 
-var hashTable = HashTable<String, String>(capacity: 10)
-hashTable["name"] = "kiran"
-hashTable["branch"] = "C.S.E"
-hashTable["name"] = "kiran s"
-hashTable["branch"] = nil
+var hashTable = HashTable<String>(capacity: 4)
+hashTable["abc"] = "kiran"
+hashTable["xyz"] = "ios"
+hashTable["cba"] = "reversed kiran"
+print(hashTable["abc"] as Any)
+hashTable["abc"] = nil
+hashTable["cba"] = "reversed kiran"
 
-// print(hashTable)
 print(hashTable.debugDescription)
 print(hashTable.count)
